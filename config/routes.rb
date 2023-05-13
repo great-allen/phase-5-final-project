@@ -8,11 +8,8 @@ Rails.application.routes.draw do
   resources :shopping_carts
   # resource :charges
   resources :orders
-  resources :addresses do
-    member do
-      patch :set_default_address
-    end
-  end
+  resources :addresses 
+    
   resources :platform_images, only: [:index]
   resources :platforms , only: [:index,:create]
   resources :products

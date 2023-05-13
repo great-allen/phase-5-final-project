@@ -60,14 +60,14 @@ class AddressesController < ApplicationController
     #     end
     #   end
 
-    def set_default_address
+    # def set_default_address
       
-      @address.set_as_default = 1
-      @address.save
+    #   @address.set_as_default = 1
+    #   @address.save
   
-      @addresses = current_user.reload.addresses
-      render json: @address, status: :ok
-    end
+    #   @addresses = current_user.reload.addresses
+    #   render json: @address, status: :ok
+    # end
 
     private
 
@@ -81,7 +81,7 @@ class AddressesController < ApplicationController
   end
 
   def address_params
-    params.permit(:user_id, :first_name, :last_name, :phone_number, :address, :postcode, :is_default_address, :set_as_default)
+    params.permit(:user_id, :first_name, :last_name, :phone_number, :address, :postcode)
   end
   
 

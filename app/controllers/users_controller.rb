@@ -47,7 +47,7 @@ class UsersController < ApplicationController
     private
 
     def user_params
-      params.permit(:username, :password, :password_confirmation,:email,:is_admin,:default_address_id)
+      params.permit(:username, :password, :password_confirmation,:email,:is_admin)
     end
     def render_not_found_response
       render json: { error: "User not found" }, status: :not_found
