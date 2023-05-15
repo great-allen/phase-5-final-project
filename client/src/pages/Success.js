@@ -18,21 +18,7 @@ const Success = ({userId}) => {
     const [countdown, setCountdown] = useState(5);
    
     const dispatch=useDispatch()
-    // const allProducts = useSelector((state) => state.cart.products);
-    // const totalPrice = allProducts.reduce((acc, curr) => {
-      
-    //   const productPrice= curr&&curr.quantity * parseFloat(curr&&curr.price)
-    //   return acc + productPrice;
-    // }, 0);
     
-  // const totalPrice = (allProducts) => {
-  //   let total = 0;
-  //   console.log("allProducts",allProducts);
-  //   allProducts&&allProducts.forEach((item) => {
-  //     total += item && item.quantity * parseFloat(item && item.price);
-  //   });
-  //   return total.toFixed(2);
-  // };
   const currentDate = new Date().toLocaleString().replace('T', ' ').substring(0, 19);;
   
 
