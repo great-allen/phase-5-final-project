@@ -121,9 +121,9 @@ function App() {
   const filterSearch=()=>{
     console.log(games);
     
-    setProducts(games)
+    // setProducts(games)
     console.log("games",products);
-    const productsToDisplay = products && products.filter((product) => {
+    const productsToDisplay = games &&games.filter((product) => {
       return product.title.toLowerCase().includes(searchProducts.toLowerCase());
     });
     setSelect('')

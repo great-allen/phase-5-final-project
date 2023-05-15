@@ -87,6 +87,7 @@ const Success = ({userId}) => {
                 handleData(responseData);
               }
             }
+            runFireworks()
           } catch (error) {
             console.error(error);
             alert(error);
@@ -147,13 +148,9 @@ const Success = ({userId}) => {
         fetch('/products')
           .then(r => r.json())
           .then((productsData) => {
-            // setGames(productsData)
+           
             console.log("data",productsData);
-            // Create a mapping of product UUIDs to their corresponding product objects
-            // const productsMap = {};
-            // productsData.forEach(product => {
-            //   productsMap[product.uuid] = product;
-            // });
+            
             const filteredProducts = productsData.filter(product => cartData.some(item => item.uuid === product.uuid));
             console.log("filteredProducts",filteredProducts);
             // Iterate over each item in the shopping cart and update the corresponding product quantity
@@ -224,7 +221,7 @@ const Success = ({userId}) => {
         </p>
         <h2>Thank you for your order!</h2>
         <p className="email-msg">Your order number is {currentOrder[0]&&currentOrder[0].order_no}</p>
-        <p className="email-msg">Check your email inbox for the receipt.</p>
+        {/* <p className="email-msg">Check your email inbox for the receipt.</p> */}
         <p className="description">
           If you have any questions, please email
           <a className="email" href="mailto:order@example.com">
