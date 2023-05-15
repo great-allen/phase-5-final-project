@@ -28,7 +28,7 @@ function App() {
   // const pickAddress = useSelector((state) => state.address.addresses);
     // console.log(pickAddress);
     const [sortBy,setSortBy]=useState('')
-    const allProducts = useSelector((state) => state.cart.products);
+    // const allProducts = useSelector((state) => state.cart.products);
   // console.log(allProducts);
   const dispatch = useDispatch();
   const [searchProducts,setSearchProducts]=useState('')
@@ -42,10 +42,11 @@ function App() {
   const location = useLocation();
   // const [checkedAddress, setCheckedAddress] = useState(null)
 
-  useEffect(() => {
-    dispatch(fetchCarts());
-  }, [dispatch]);
-  const cartProducts = useSelector((state) => state.cart.products);
+  // useEffect(() => {
+  //   dispatch(fetchCarts());
+  // }, [dispatch]);
+  // const cartProducts = useSelector((state) => state.cart.products);
+  // console.log("cartProducts",cartProducts);
   useEffect(()=>{
     fetch("/products").then(r=>r.json()).then((data)=>{
       setProducts(data)
@@ -62,7 +63,8 @@ function App() {
         if (r.ok) {
           r.json().then((user) => {
             setUser(user);
-            localStorage.setItem('isAdmin', user.is_admin);
+            dispatch(fetchCarts())
+            // localStorage.setItem('isAdmin', user.is_admin);
             setIsLoading(false);
             // setIsAdmin(user.is_admin)
           });
@@ -72,7 +74,17 @@ function App() {
       })
       .catch(() => setIsLoading(false));
   }, []);
-
+  const allProducts = useSelector((state) => state.cart.products);
+  // const cartProducts = useSelector((state) => state.cart.products);
+  // const totalPrice = () => {
+  //   let total = 0;
+  //   console.log("allProducts",allProducts);
+  //  allProducts&&allProducts.forEach((item) => {
+  //     total += item && item.quantity * parseFloat(item && item.price);
+  //   });
+  //   return total.toFixed(2);
+  // };
+  // console.log(totalPrice());
   if (isLoading) {
     return <Loader/>;
   }
@@ -108,12 +120,16 @@ function App() {
   }
   const filterSearch=()=>{
     console.log(games);
+    
     setProducts(games)
+    console.log("games",products);
     const productsToDisplay = products && products.filter((product) => {
       return product.title.toLowerCase().includes(searchProducts.toLowerCase());
     });
     setSelect('')
+    console.log("searchProducts",searchProducts);
     setProducts(productsToDisplay)
+    console.log("products",products);
   }
   // const productsToDisplay = products && products.filter((product) => {
   //   return product.title.toLowerCase().includes(searchProducts.toLowerCase());
@@ -194,7 +210,7 @@ function App() {
                 <AllGames products={sortedProducts} setSelect={setSelect} select={select} setSearchProducts={setSearchProducts} sortBy={sortBy} setSortBy={setSortBy} setProducts={setProducts} games={games}/>
               </Route>  
           <Route exact path="/Game/:id">
-            <SingleGame products={products} user={user} updateCart={updateCart} createCarts={createCarts} cartProducts={cartProducts}/>
+            <SingleGame products={products} user={user} updateCart={updateCart} createCarts={createCarts} cartProducts={allProducts}/>
           </Route> 
           <Route exact path="/ShoppingCart">
             <ShoppingCart user={user} />

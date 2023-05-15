@@ -5,298 +5,179 @@ import { useSelector,useDispatch } from "react-redux";
 import { resetCarts } from "../redux/cartReducer";
 import { resetAddress } from "../redux/addressReducer";
 import { runFireworks } from '../lib/utils';
-
-const Success = ({userId,checkedAddress,allProducts}) => {
+import { fetchCarts } from "../redux/cartReducer";
+const Success = ({userId}) => {
+   
     const pickAddress = useSelector((state) => state.address.addresses);
-    // console.log("success",allProducts);
+    
    const [orders,setOrders]=useState([])
-    // const [games,setGames]=useState([])
-    // const [carts,setCarts]=useState([])
+    
     const searchParams = new URLSearchParams(window.location.search);
     const paymentIntentId = searchParams.get('payment_intent');
     const history = useHistory();
     const [countdown, setCountdown] = useState(5);
-    
+   
     const dispatch=useDispatch()
+    // const allProducts = useSelector((state) => state.cart.products);
+    // const totalPrice = allProducts.reduce((acc, curr) => {
       
-    // const products = useSelector((state) => state.cart.products);
+    //   const productPrice= curr&&curr.quantity * parseFloat(curr&&curr.price)
+    //   return acc + productPrice;
+    // }, 0);
     
-  const totalPrice = () => {
-    let total = 0;
-    console.log("allProducts",allProducts);
-    allProducts && allProducts.forEach((item) => {
-      total += item && item.quantity * parseFloat(item && item.price);
-    });
-    return total.toFixed(2);
-  };
+  // const totalPrice = (allProducts) => {
+  //   let total = 0;
+  //   console.log("allProducts",allProducts);
+  //   allProducts&&allProducts.forEach((item) => {
+  //     total += item && item.quantity * parseFloat(item && item.price);
+  //   });
+  //   return total.toFixed(2);
+  // };
   const currentDate = new Date().toLocaleString().replace('T', ' ').substring(0, 19);;
   
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/orders');
-        const data = await response.json();
+    
+    fetch("/shopping_cart")
+      .then((response) => response.json())
+      .then((data) => {
+        const totalPrice = data.reduce((acc, curr) => {
+          const productPrice = curr && curr.quantity * parseFloat(curr && curr.price);
+          return acc + productPrice;
+        }, 0);
   
-        const orderToUpdate = data && data.find((item) => {
-          return item.payment_no === paymentIntentId;
-        });
+        const fetchData = async () => {
+          try {
+            const response = await fetch("/orders");
+            const data = await response.json();
   
-        if (orderToUpdate) {
-          const updateResponse = await fetch(`/orders/${orderToUpdate.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              user_id:userId,
-              total_money: totalPrice(),
-              payment_at:currentDate,
-              address_id: pickAddress[0].id,
-              payment_no:paymentIntentId
-            }),
-          });
-        } else {
-          const createResponse = await fetch("/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              user_id:userId,
-              total_money: totalPrice(),
-              payment_at:currentDate,
-              address_id: pickAddress[0].id,
-              payment_no:paymentIntentId
-            }),
-          });
-          const responseData = await createResponse.json();
-          await handleData(responseData);
-        }
+            if (!data || data.length === 0) {
+              console.log("price", totalPrice);
+              const createResponse = await fetch("/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  user_id: userId,
+                  total_money: totalPrice,
+                  payment_at: currentDate,
+                  address_id: pickAddress[0].id,
+                  payment_no: paymentIntentId,
+                }),
+              });
+              const responseData = await createResponse.json();
+              handleData(responseData);
+            } else {
+              const orderToUpdate = data.find((item) => {
+                return item.payment_no === paymentIntentId;
+              });
   
-        runFireworks();
-      } catch (error) {
-        console.error(error);
-        alert(error);
-      }
-    };
+              if (!orderToUpdate) {
+                const createResponse = await fetch("/orders", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    user_id: userId,
+                    total_money: totalPrice,
+                    payment_at: currentDate,
+                    address_id: pickAddress[0].id,
+                    payment_no: paymentIntentId,
+                  }),
+                });
+                const responseData = await createResponse.json();
+                handleData(responseData);
+              }
+            }
+          } catch (error) {
+            console.error(error);
+            alert(error);
+          }
+        };
   
-    fetchData();
-  }, [allProducts]);
-  
-  const handleData = async (data) => {
-    try {
-      const response = await fetch("/shopping_cart");
-      const products = await response.json();
-      let productsToReturn = [];
-      let requests = products && products.map(async (product) => {
-        const response = await fetch("/order_items", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: product.title,
-            amount: product.quantity,
-            price: product.price,
-            url: product.image_url,
-            platform: product.platform,
-            category: product.category,
-            order_id: data.id,
-          }),
-        });
-        const responseData = await response.json();
-        productsToReturn.push(responseData.productInfo);
+        fetchData();
       });
+  }, []);
   
-      await Promise.all(requests);
-      console.log("productsToReturn", productsToReturn);
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
+  
+  
+  const handleData = (data) => {
+    // console.log("start iterate");
+    fetch("/shopping_cart")
+      .then((r) => r.json())
+      .then((products) => {
+        // console.log("thisProducts", products);
+        let productsToReturn = [];
+        let requests = products && products.map((product) => {
+          return fetch("/order_items", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: product.title,
+              amount: product.quantity,
+              price: product.price,
+              url: product.image_url,
+              platform: product.platform,
+              category: product.category,
+              order_id: data.id,
+            }),
+          });
+        });
+  
+        Promise.all(requests)
+          .then((responses) => Promise.all(responses.map((r) => r.json())))
+          .then((data) => {
+            productsToReturn = data.map((item) => item.productInfo);
+            // console.log("iterate finish");
+          
+          })
+          .catch((err) => console.log(err));
+      });
+      
   };
   
   useEffect(() => {
     const hasRun = localStorage.getItem('hasRun');
-    if (!hasRun) {
-      const fetchData = async () => {
-        try {
-          const cartResponse = await fetch('/shopping_carts');
-          const cartData = await cartResponse.json();
-  
-          const productsResponse = await fetch('/products');
-          const productsData = await productsResponse.json();
-  
-          const filteredProducts = productsData.filter(product => cartData.some(item => item.uuid === product.uuid));
-          console.log("filteredProducts",filteredProducts);
-  
-          cartData.forEach(async cartItem => {
-            const product = filteredProducts.filter((product)=>{
-              return product.uuid===cartItem.uuid
-            });
-            if (product) {
-              console.log("product",product[0].amount);
-              
-              const newQuantity = product[0].amount - cartItem.quantity;
-              const response = await fetch(`/products/${product[0].id}`, {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ amount: newQuantity })
+  if (!hasRun) {
+    fetch('/shopping_carts')
+      .then(r => r.json())
+      .then((cartData) => {
+        // setCarts(cartData)
+        console.log("cartData",cartData);
+        fetch('/products')
+          .then(r => r.json())
+          .then((productsData) => {
+            // setGames(productsData)
+            console.log("data",productsData);
+            // Create a mapping of product UUIDs to their corresponding product objects
+            // const productsMap = {};
+            // productsData.forEach(product => {
+            //   productsMap[product.uuid] = product;
+            // });
+            const filteredProducts = productsData.filter(product => cartData.some(item => item.uuid === product.uuid));
+            console.log("filteredProducts",filteredProducts);
+            // Iterate over each item in the shopping cart and update the corresponding product quantity
+            cartData.forEach(cartItem => {
+              const product = filteredProducts.filter((product)=>{
+                return product.uuid===cartItem.uuid
               });
-              const responseData = await response.json();
-              localStorage.setItem('hasRun', true);
-            }
+              if (product) {
+                console.log("product",product[0].amount);
+                
+                const newQuantity = product[0].amount - cartItem.quantity;
+                fetch(`/products/${product[0].id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ amount: newQuantity })
+                }).then(r=>r.json()).then(localStorage.setItem('hasRun', true))
+              }
+            })
           });
-        } catch (error) {
-          console.error(error);
-          alert(error);
-        }
-      };
-  
-      fetchData();
+      });
     }
   }, []);
-  
-
-  
-
-
-  // useEffect(() => {
-  //   // console.log("firstProducts",allProducts);
-  //   fetch('/orders')
-  //     .then(r => r.json())
-  //     .then((data) => {
-  //       const orderToUpdate = data&&data.find((item) => {
-  //         return item.payment_no === paymentIntentId;
-  //       });
-  
-  //       if (orderToUpdate) {
-  //         fetch(`/orders/${orderToUpdate.id}`, {
-  //           method: "PATCH",
-  //           headers: { "Content-Type": "application/json" },
-  //           body: JSON.stringify({ 
-  //             user_id:userId,
-  //             total_money: totalPrice(),
-  //             payment_at:currentDate,
-  //             address_id: pickAddress[0].id,
-  //             payment_no:paymentIntentId
-  //           }),
-  //         })
-  //           .then((res) => res.json())
-  //           .then((data)=>{
-              
-  //           }).catch(err=>alert(err));
-  //       } else {
-  //         // console.log("Products: ", allProducts);
-  //         fetch("/orders", {
-  //           method: "POST",
-  //           headers: { "Content-Type": "application/json" },
-  //           body: JSON.stringify({ 
-  //             user_id:userId,
-  //             total_money: totalPrice(),
-  //             payment_at:currentDate,
-  //             address_id: pickAddress[0].id,
-  //             payment_no:paymentIntentId
-  //           }),
-  //         })
-  //           .then((res) => res.json())
-  //           .then((data) => {
-  //             handleData(data)
-  //           });
-  //       }
-        
-  //     })
-  //     runFireworks();
-      
-  //     // const intervalId = setInterval(() => {
-  //     //   setCountdown(countdown => countdown - 1);
-  //     // }, 1000);
-      
-  //     // return () => {
-  //     //   clearInterval(intervalId);
-        
-  //     // }
-
-  // }, [allProducts]);
-  
-  // const handleData = (data) => {
-  //   // console.log("start iterate");
-  //   fetch("/shopping_cart")
-  //     .then((r) => r.json())
-  //     .then((products) => {
-  //       // console.log("thisProducts", products);
-  //       let productsToReturn = [];
-  //       let requests = products && products.map((product) => {
-  //         return fetch("/order_items", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             title: product.title,
-  //             amount: product.quantity,
-  //             price: product.price,
-  //             url: product.image_url,
-  //             platform: product.platform,
-  //             category: product.category,
-  //             order_id: data.id,
-  //           }),
-  //         });
-  //       });
-  
-  //       Promise.all(requests)
-  //         .then((responses) => Promise.all(responses.map((r) => r.json())))
-  //         .then((data) => {
-  //           productsToReturn = data.map((item) => item.productInfo);
-  //           // console.log("iterate finish");
-          
-  //         })
-  //         .catch((err) => console.log(err));
-  //     });
-      
-  // };
-  
-  // useEffect(() => {
-  //   const hasRun = localStorage.getItem('hasRun');
-  // if (!hasRun) {
-  //   fetch('/shopping_carts')
-  //     .then(r => r.json())
-  //     .then((cartData) => {
-  //       // setCarts(cartData)
-  //       console.log("cartData",cartData);
-  //       fetch('/products')
-  //         .then(r => r.json())
-  //         .then((productsData) => {
-  //           // setGames(productsData)
-  //           console.log("data",productsData);
-  //           // Create a mapping of product UUIDs to their corresponding product objects
-  //           // const productsMap = {};
-  //           // productsData.forEach(product => {
-  //           //   productsMap[product.uuid] = product;
-  //           // });
-  //           const filteredProducts = productsData.filter(product => cartData.some(item => item.uuid === product.uuid));
-  //           console.log("filteredProducts",filteredProducts);
-  //           // Iterate over each item in the shopping cart and update the corresponding product quantity
-  //           cartData.forEach(cartItem => {
-  //             const product = filteredProducts.filter((product)=>{
-  //               return product.uuid===cartItem.uuid
-  //             });
-  //             if (product) {
-  //               console.log("product",product[0].amount);
-                
-  //               const newQuantity = product[0].amount - cartItem.quantity;
-  //               fetch(`/products/${product[0].id}`, {
-  //                 method: 'PATCH',
-  //                 headers: {
-  //                   'Content-Type': 'application/json'
-  //                 },
-  //                 body: JSON.stringify({ amount: newQuantity })
-  //               }).then(r=>r.json()).then(localStorage.setItem('hasRun', true))
-  //             }
-  //           })
-  //         });
-  //     });
-  //   }
-  // }, []);
   
 
 
@@ -331,7 +212,7 @@ const Success = ({userId,checkedAddress,allProducts}) => {
       clearInterval(intervalId);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [dispatch,history]);
   
 
 // console.log(currentOrder[0]&&currentOrder[0].order_no);

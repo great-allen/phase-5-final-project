@@ -10,6 +10,7 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useSelector } from "react-redux";
 import { resetAddress } from "./redux/addressReducer";
 import { useDispatch } from "react-redux";
+import { resetCarts } from "./redux/cartReducer";
 function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProducts,setSelect,select,filterSearch }) {
   const products = useSelector((state) => state.cart.products);
   const dispatch=useDispatch()
@@ -17,7 +18,8 @@ function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProd
   function handleLogoutClick() {
     fetch("/logout", { method: "DELETE" }).then((r) => {
       if (r.ok) {
-        dispatch(resetAddress());
+        // dispatch(resetCarts())
+        // dispatch(resetAddress());
         localStorage.clear();
         setUser(null)
         window.location.href = "/";
