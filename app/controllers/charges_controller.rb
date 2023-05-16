@@ -61,8 +61,8 @@ class ChargesController < ApplicationController
       # metadata:{
       #   customer:params[:customer]
       # }
-      description:params[:description]
-      success_url: "https://e-gaming.onrender.com/Success"
+      description:params[:description],
+      
     )
      
     render json: {
