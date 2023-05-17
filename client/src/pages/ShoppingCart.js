@@ -28,16 +28,16 @@ import { Divider } from '@mui/material';
 
 function ShoppingCart({user}) {
   const dispatch = useDispatch();
-  const [products,setProducts]=useState([])
+  // const [products,setProducts]=useState([])
   // useEffect(() => {
   //   dispatch(fetchCarts());
   // }, [dispatch]);
-  useEffect(()=>{
-    fetch("/shopping_cart").then(r=>r.json()).then(setProducts)
-  },[])
-    // const products = useSelector((state) => state.cart.products);
+  // useEffect(()=>{
+  //   fetch("/shopping_cart").then(r=>r.json()).then(setProducts)
+  // },[])
+    const products = useSelector((state) => state.cart.products);
   
-  console.log(products);
+  console.log("shoppingCart",products);
   
   const totalPrice = () => {
     let total = 0;

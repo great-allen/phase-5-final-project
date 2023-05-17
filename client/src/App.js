@@ -224,8 +224,8 @@ function App() {
           <Route exact path="/OrderHistory">
             <OrderHistory user={user}  />
           </Route> 
-          <Route path="/Success">
-            <Success userId={userId} allProducts={allProducts} />
+          <Route exact path="/Success">
+            element={<Success userId={userId} allProducts={allProducts} />}
           </Route> 
           <Route exact path="/" >
                 <Home products={products} setSelect={setSelect} setSearchProducts={setSearchProducts}  />
