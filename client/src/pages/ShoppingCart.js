@@ -1,11 +1,11 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import Grid from '@mui/material/Grid';
 import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
 import { useSelector } from "react-redux";
 import { removeItem,removeCarts,resetCarts } from "../redux/cartReducer";
 import { useDispatch } from "react-redux";
-
+import { fetchCarts } from "../redux/cartReducer";
 import Button from '@mui/material/Button';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import Card from '@mui/material/Card';
@@ -28,9 +28,9 @@ import { Divider } from '@mui/material';
 
 function ShoppingCart({user}) {
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchCarts());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchCarts());
+  }, [dispatch]);
     const products = useSelector((state) => state.cart.products);
   
   console.log(products);
