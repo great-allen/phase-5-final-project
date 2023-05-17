@@ -3,7 +3,7 @@ require "stripe"
 
 
 class ChargesController < ApplicationController
-  skip_before_action :authorize, only: :create
+  # skip_before_action :authorize, only: :create
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found_response
   Stripe.api_key = "sk_test_51N1J1DKel7nI8Ew4r5XWt2av6s2ODAk20Fru2JIITtBC2hPAfMgrOS7v0PWZr3CjxG5wJe34YE6lAEZPmGCos9sc004RVAX12M"
     
