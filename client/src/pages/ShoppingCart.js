@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React,{useEffect, useState} from 'react'
 import Grid from '@mui/material/Grid';
 import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
@@ -28,10 +28,14 @@ import { Divider } from '@mui/material';
 
 function ShoppingCart({user}) {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchCarts());
-  }, [dispatch]);
-    const products = useSelector((state) => state.cart.products);
+  const [products,setProducts]=useState([])
+  // useEffect(() => {
+  //   dispatch(fetchCarts());
+  // }, [dispatch]);
+  useEffect(()=>{
+    fetch("/shopping_cart").then(r=>r.json()).then(setProducts)
+  },[])
+    // const products = useSelector((state) => state.cart.products);
   
   console.log(products);
   
