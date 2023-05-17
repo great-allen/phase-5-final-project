@@ -224,7 +224,7 @@ function App() {
           <Route exact path="/OrderHistory">
             <OrderHistory user={user}  />
           </Route> 
-          <Route exact path="/Success">
+          <Route exact path="https://e-gaming.onrender.com//Success">
             <Success userId={userId} allProducts={allProducts} />
           </Route> 
           <Route exact path="/" >
