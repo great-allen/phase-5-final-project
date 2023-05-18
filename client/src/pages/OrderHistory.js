@@ -28,7 +28,7 @@ console.log(orders);
                          {order.payment_at.split('').slice(0,10).join('')+','+''+order.payment_at.split('').slice(11,19).join('')}  <span style={{color:"#BB2B50"}}>Total Money:</span> ${order.total_money}(AUD)
                         <br/>
                         <span style={{color:"#BB2B50"}}>Shipping:</span>
-                         {order.address.address.toUpperCase() + ' ' + order.address.postcode} {'  '} Contact Name: {order.address.first_name.toUpperCase()+ ' ' + order.address.last_name.toUpperCase() }  <span style={{color:"#BB2B50"}}>Contact No:</span> {order.address.phone_number}
+                         {order.address.address.toUpperCase() + ' ' + order.address.postcode} {'  '} <span style={{color:"#BB2B50"}}>Contact Name:</span> {order.address.first_name.toUpperCase()+ ' ' + order.address.last_name.toUpperCase() }  <span style={{color:"#BB2B50"}}>Contact No:</span> {order.address.phone_number}
                         <br/>
                         <br/>
                         <span style={{color:"#BB2B50"}}>Items:</span>
