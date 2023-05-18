@@ -60,7 +60,8 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "https://e-gaming.onrender.com/Success",
+        return_url: "http://localhost:4000/Success"
+        
         // "http://localhost:4000/Success"
         // "https://e-gaming.onrender.com/Success",
        

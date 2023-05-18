@@ -89,13 +89,13 @@ const ordersToDisplay = orders.filter((order) => {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.address.first_name.toUpperCase() + row.address.last_name.toUpperCase()}
+                {row.address.first_name.toUpperCase() +' '+ row.address.last_name.toUpperCase()}
               </TableCell>
               <TableCell align="right">{row.order_no }</TableCell>
-              <TableCell align="right">{row.total_money }</TableCell>
-              <TableCell align="right">{row.payment_at}</TableCell>
+              <TableCell align="right">$ {row.total_money }</TableCell>
+              <TableCell align="right">{row.payment_at.split('').slice(0,10).join('')+','+''+row.payment_at.split('').slice(11,19).join('')}</TableCell>
               <TableCell align="right">{row.payment_no}</TableCell>
-              <TableCell align="right">{row.address.address  +' '+ row.address.postcode}</TableCell>
+              <TableCell align="right">{row.address.address.toUpperCase()  +' '+ row.address.postcode}</TableCell>
               <TableCell align="right"><button onClick={()=>handleClick(row)}>Click for info</button></TableCell>
             </TableRow>
           ))}
@@ -114,9 +114,25 @@ const ordersToDisplay = orders.filter((order) => {
              selects.order_items && selects.order_items.map((item,index)=>{
                 return <ListGroup key={item.id} style={{maxHeight:350, overflow:"scroll"}}>
                 <ListGroup.Item >
-                  Item {index+1}: {item.title} ({item.platform})
+                  <div>
+                    <span style={{color:"#BB2B50"}}>Item {index+1}: {''}</span>
+                   {item.title} ({item.platform})
+                  </div>
                   <br/>
-                 Unit: {item.amount}  Price: ${item.price}
+                  <span style={{color:"#2E945A"}}>
+                 Unit: {''}
+                 </span> 
+                 <span style={{marginRight:5}}>
+                 {item.amount},{' '}
+                  </span> 
+                  
+                 <span style={{color:"#2E945A"}}>
+                 Price: {''}
+                 </span>
+                 <span>
+                  ${item.price}
+                 </span>
+                 
                 </ListGroup.Item>
                 </ListGroup>
               })
