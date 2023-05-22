@@ -4,9 +4,9 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-
+import Footer from '../Footer';
 import Category from '../Category'
-
+import Divider from '@mui/material/Divider';
 
 
 
@@ -78,6 +78,8 @@ function Home({products,setSelect,setSearchProducts}) {
     
   
   </Grid>
+  <Divider />
+  <Footer />
   </Box>
   )
 }

@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux';
 import CheckoutForm from "./pages/CheckoutForm";
 import Success from "./pages/Success";
 import OrderHistory from "./pages/OrderHistory";
+import Profile from "./pages/Profile";
 
 function App() {
   // const pickAddress = useSelector((state) => state.address.addresses);
@@ -40,6 +41,7 @@ function App() {
   const [select,setSelect]=useState('')
   const [searchImages,setSearchImages]=useState('')
   const location = useLocation();
+  // const [showChangeSuccess,setShowChangeSuccess]=useState(false)
   // const [checkedAddress, setCheckedAddress] = useState(null)
 
   // useEffect(() => {
@@ -173,6 +175,11 @@ function App() {
   //   return product.title.toLowerCase().includes(searchProducts.toLowerCase());
   // });
 
+  const fetchUsers=(newUser)=>{
+    // setShowChangeSuccess(true)
+    setUser(newUser)
+  }
+
   return (
     <>
     
@@ -200,6 +207,9 @@ function App() {
               <Route exact path="/Game/:id">
                 <SingleGame products={products} user={user} />
               </Route> 
+              <Route exact path="/Profile">
+                <Profile user={user} fetchUsers={fetchUsers}/>
+              </Route>
               <Route exact path="/" >
                 <Home products={products} setSelect={setSelect} setSearchProducts={setSearchProducts}  />
               </Route>
@@ -227,6 +237,9 @@ function App() {
           <Route exact path="/Success">
             element={<Success userId={userId} allProducts={allProducts} />}
           </Route> 
+          <Route exact path="/Profile">
+                <Profile user={user} fetchUsers={fetchUsers}  />
+          </Route>
           <Route exact path="/" >
                 <Home products={products} setSelect={setSelect} setSearchProducts={setSearchProducts}  />
               </Route>

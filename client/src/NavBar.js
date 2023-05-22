@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { resetAddress } from "./redux/addressReducer";
 import { useDispatch } from "react-redux";
 import { resetCarts } from "./redux/cartReducer";
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProducts,setSelect,select,filterSearch }) {
   const products = useSelector((state) => state.cart.products);
   const dispatch=useDispatch()
@@ -31,6 +32,10 @@ function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProd
 
   function handleAdminClick() {
     setIsAdmin(true);
+  }
+
+  function handleUnAdmin(){
+    setIsAdmin(false)
   }
 
   const handleSubmit = (event) => {
@@ -68,7 +73,7 @@ function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProd
             
             
              {isAdmin ? (<>
-              <Nav.Link as={Link} to="/">Home</Nav.Link>
+              <Nav.Link as={Link} to="/" onClick={handleUnAdmin}>Home</Nav.Link>
               <Nav.Link as={Link} to="/Admin"></Nav.Link>
               <Nav.Link as={Link} to="/Games">Games</Nav.Link>
               <Nav.Link as={Link} to="/Users">Users</Nav.Link>
@@ -88,12 +93,20 @@ function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProd
             <Link to="/AllGames" >
             <Button variant="outline-success" type="submit" onClick={handleSubmit}>Search</Button>
             </Link>
-            {user.is_admin?'':<div  style={{display:"flex",paddingLeft:700,alignItems:"center",position:"relative"}}>
+            {/* {user.is_admin?'':<> */}
+            <div  style={{display:"flex",paddingLeft:680,alignItems:"center",position:"relative"}}>
+             {/* <div style={{position:"relative"}}>
+              <Link to="/Message">
+              <EmailOutlinedIcon style={{marginRight:10}}/>
+              </Link>
+              <span style={{position:"absolute",display:"flex",alignItems:"center",justifyContent:"center",top:-11,right:3,backgroundColor: "#2879fe", borderRadius: "50%",color:"white",fontSize:15,width:"20px"}}>0</span>
+             </div> */}
               <Link to="/ShoppingCart">
                 <ShoppingCartOutlinedIcon style={{cursor: "pointer",color: "#777"}} />
               </Link>
               <span style={{position:"absolute",display:"flex",alignItems:"center",justifyContent:"center",top:-5,right:-14,backgroundColor: "#2879fe", borderRadius: "50%",color:"white",fontSize:15,width:"20px"}}>{products.length}</span>
-            </div>}
+            </div>
+            {/* </>} */}
             
           </Form>
             </>)}
@@ -108,9 +121,10 @@ function NavBar({ user, setUser,isAdmin, setIsAdmin,searchProducts,setSearchProd
           <Navbar.Text>
             Signed in as: 
           </Navbar.Text>
-          <NavDropdown title={user.username} id="basic-nav-dropdown" style={{marginRight:"30px"}}>
-              <NavDropdown.Item  onClick={handleLogoutClick}>Logout</NavDropdown.Item>
+          <NavDropdown title={user.username} id="basic-nav-dropdown" style={{marginRight:"40px"}}>
+              <NavDropdown.Item as={Link} to="/Profile">My Profile</NavDropdown.Item>
               {user.is_admin?<NavDropdown.Item as={Link} to="/Admin" onClick={handleAdminClick} >Admin</NavDropdown.Item>:<NavDropdown.Item as={Link} to="/OrderHistory" >Orders</NavDropdown.Item>}
+              <NavDropdown.Item  onClick={handleLogoutClick}>Logout</NavDropdown.Item>
               </NavDropdown>
         </Navbar.Collapse>
       </Container>
